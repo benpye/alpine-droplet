@@ -1,0 +1,3 @@
+[submodule "alpine-make-vm-image"]
+	path = alpine-make-vm-image
+	url = https://github.com/alpinelinux/alpine-make-vm-image.git
