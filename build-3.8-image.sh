@@ -1,3 +1,11 @@
 #!/bin/sh
-./alpine-make-vm-image/alpine-make-vm-image -p openssh -c -f qcow2 alpine-3.8-virt.qcow2 ./setup.sh
-bzip2 -z alpine-3.8-virt.qcow2
+FILENAME=alpine-do-virt-$(date +%Y-%m-%d-%k%M)
+
+if [ "$CI" = "true" ]
+then
+    echo "Running under CI"
+    echo $FILENAME > version
+fi
+
+./alpine-make-vm-image/alpine-make-vm-image --packages openssh --script-chroot --image-format qcow2 $FILENAME.qcow2 -- ./setup.sh
+bzip2 -z $FILENAME.qcow2

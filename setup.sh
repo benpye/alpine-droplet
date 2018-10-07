@@ -1,17 +1,49 @@
 #!/bin/sh
 
+# Enable openssh server
 rc-update add sshd default
-rc-update add networking default
 
-echo -e "auto lo\niface lo inet loopback\nauto eth0\niface eth0 inet dhcp" > /etc/network/interfaces
+# Configure networking
+cat > /etc/network/interfaces <<-EOF
+iface lo inet loopback
+iface eth0 inet dhcp
+EOF
 
+ln -s networking /etc/init.d/net.lo
+ln -s networking /etc/init.d/net.eth0
+
+rc-update add net.eth0 default
+rc-update add net.lo boot
+
+# Create root ssh directory
 mkdir -p /root/.ssh
 chmod 700 /root/.ssh
 
-echo -e "#!/bin/sh\nwget -T 5 http://169.254.169.254/metadata/v1/hostname -q -O /etc/hostname\nhostname -F /etc/hostname\nwget -T 5 http://169.254.169.254/metadata/v1/public-keys -O /root/.ssh/authorized_keys\nchmod 600 /root/.ssh/authorized_keys\nrc-update del do-init default\nexit 0" > /bin/do-init
-echo -e "#!/sbin/openrc-run\ndepend() {\n       need networking\n}\ncommand=\"/bin/do-init\"\ncommand_args=\"\"\npidfile=\"/tmp/do-init.pid\"\n" > /etc/init.d/do-init
+# Grab config from DigitalOcean metadata service
+cat > /bin/do-init <<-EOF
+#!/bin/sh
+wget -T 5 http://169.254.169.254/metadata/v1/hostname    -q -O /etc/hostname
+wget -T 5 http://169.254.169.254/metadata/v1/public-keys -q -O /root/.ssh/authorized_keys
+hostname -F /etc/hostname
+chmod 600 /root/.ssh/authorized_keys
+rc-update del do-init default
+exit 0
+EOF
 
+# Create do-init OpenRC service
+cat > /etc/init.d/do-init <<-EOF
+#!/sbin/openrc-run
+depend() {
+    need networking
+}
+command="/bin/do-init"
+command_args=""
+pidfile="/tmp/do-init.pid"
+EOF
+
+# Make do-init and service executable
 chmod +x /etc/init.d/do-init
 chmod +x /bin/do-init
 
+# Enable do-init service
 rc-update add do-init default
