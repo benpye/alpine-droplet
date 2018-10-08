@@ -34,7 +34,7 @@ EOF
 cat > /etc/init.d/do-init <<-EOF
 #!/sbin/openrc-run
 depend() {
-    need networking
+    need net.eth0
 }
 command="/bin/do-init"
 command_args=""
