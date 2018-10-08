@@ -7,5 +7,5 @@ then
     echo $FILENAME > version
 fi
 
-./alpine-make-vm-image/alpine-make-vm-image --packages openssh --script-chroot --image-format qcow2 $FILENAME.qcow2 -- ./setup.sh
+./alpine-make-vm-image/alpine-make-vm-image --packages "openssh e2fsprogs-extra" --script-chroot --image-format qcow2 $FILENAME.qcow2 -- ./setup.sh
 bzip2 -z $FILENAME.qcow2
