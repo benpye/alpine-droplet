@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#Fix ENVs
+export PATH="$PATH:/usr/sbin:/sbin:/bin"
+
 # Enable openssh server
 rc-update add sshd default
 
