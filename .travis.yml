@@ -7,7 +7,7 @@ addons:
     - qemu-utils
     - bzip2
 script:
-- sudo ./build-3.8-image.sh
+- sudo ./build-image.sh
 before_deploy:
   # Set up git user name and tag this commit
   - git config --local user.name "Ben Pye"
