@@ -1,6 +1,7 @@
 #!/bin/sh
 F=alpine-virt-image-$(date +%Y-%m-%d-%k%M)
 
+echo "TEST CHANGE"
 if [ "$CI" = "true" ]
 then
     echo "Running under CI"
