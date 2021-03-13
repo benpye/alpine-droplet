@@ -21,4 +21,21 @@ jobs:
         run: sudo apt install qemu-utils bzip2
 
       - name: Build
-        run: cd $GITHUB_WORKSPACE && sudo ./build-image.sh
+        run: sudo -E ./build-image.sh
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: alpine-virt-image.qcow2.bz2
+          path: "*.bz2"
+
+      - name: Read version
+        id: getversion
+        run: echo "::set-output name=version::$(cat version)"
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        if: github.ref == 'refs/heads/master'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          files: "*.bz2"
+          automatic_release_tag: ${{ steps.getversion.outputs.version }}
+          prerelease: false
