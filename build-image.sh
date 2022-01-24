@@ -1,5 +1,5 @@
 #!/bin/sh
-F=alpine-virt-image-$(date +%Y-%m-%d-%k%M)
+F=alpine-virt-image-$(date +%Y-%m-%d-%H%M)
 
 if [ "$CI" = "true" ]
 then
